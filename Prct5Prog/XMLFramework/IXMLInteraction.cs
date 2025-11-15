@@ -4,12 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Prct5Prog.XMLFramework
 {
     interface IXMLInteraction
     {
+        public XDocument XDocument { get; }
+
         void Add(BoolMatrix boolMatrix);
+
+        BoolMatrix GetEmelent(int id);
 
         BoolMatrix Pop(int id);
 
