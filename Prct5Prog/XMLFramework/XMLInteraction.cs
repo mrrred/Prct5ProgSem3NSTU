@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -144,9 +145,32 @@ namespace Prct5Prog.XMLFramework
             _xDocument.Save(_xDocumentName);
         }
 
-        public int Search(BoolMatrix boolMatrix)
+        // Searches for matrices that have attributes matching those in XML files and returns a dictionary of[id] : [BoolMatrix]
+        public Dictionary<string, BoolMatrix> SearchOnAttributes(Dictionary<string, string>? attributes = null)
         {
-            throw new NotImplementedException();
+            Dictionary<string, BoolMatrix> result = [];
+
+            foreach (var a in _xDocument.Root.Elements().Where(el => AttributeMatching(el, attributes)))
+            {
+                result.Add(a.Attribute("Id").Value, stringToBoolMatrix(a.Value));
+            }
+
+            return result;
+        }
+
+        private bool AttributeMatching(XElement xElement, Dictionary<string, string>? attributes)
+        {
+            if (attributes == null) return true;
+
+            foreach (var (attribute, value) in attributes)
+            {
+                if (xElement.Attribute(attribute).Value != value)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

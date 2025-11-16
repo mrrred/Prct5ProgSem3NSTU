@@ -20,6 +20,6 @@ namespace Prct5Prog.XMLFramework
 
         void EditElement(int id, BoolMatrix boolMatrix);
 
-        int Search(BoolMatrix boolMatrix);
+        Dictionary<string, BoolMatrix> SearchOnAttributes(Dictionary<string, string> attributes);
     }
 }
