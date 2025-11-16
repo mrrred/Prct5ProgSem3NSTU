@@ -14,13 +14,12 @@ namespace Prct5Prog.XMLFramework
 
         void Add(BoolMatrix boolMatrix);
 
-        BoolMatrix GetEmelent(int id);
+        BoolMatrix GetElement(int id);
 
         BoolMatrix Pop(int id);
 
-        int Search(BoolMatrix boolMatrix);
-
         void EditElement(int id, BoolMatrix boolMatrix);
 
+        int Search(BoolMatrix boolMatrix);
     }
 }

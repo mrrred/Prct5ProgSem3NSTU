@@ -96,17 +96,17 @@ namespace Prct5Prog.XMLFramework
             XElement xElement = new XElement("Matrix",
                 new XAttribute("Id", _xDocument.Root.Elements().Count()),
                 new XAttribute("Rows", boolMatrix.RowsCount),
-                new XAttribute("Columns", boolMatrix.CollumnsCount),
-                new XElement("Data", BoolMAtrixToString(boolMatrix))
+                new XAttribute("Columns", boolMatrix.CollumnsCount)
                 );
 
+            xElement.Value = BoolMAtrixToString(boolMatrix);
 
             _xDocument.Root.Add(xElement);
 
             _xDocument.Save(_xDocumentName);
         }
 
-        public BoolMatrix GetEmelent(int id)
+        public BoolMatrix GetElement(int id)
         {
             XElement searchElement = _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute("Id").Value) == id);
 
@@ -115,7 +115,7 @@ namespace Prct5Prog.XMLFramework
 
         public BoolMatrix Pop(int id)
         {
-            BoolMatrix boolMatrix = GetEmelent(id);
+            BoolMatrix boolMatrix = GetElement(id);
 
             _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute("Id").Value) == id).Remove();
 
@@ -133,7 +133,15 @@ namespace Prct5Prog.XMLFramework
 
         public void EditElement(int id, BoolMatrix boolMatrix)
         {
-            throw new NotImplementedException();
+            XElement xElement = _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute("Id").Value) == id);
+
+            xElement.Value = BoolMAtrixToString(boolMatrix);
+
+            xElement.Attribute("Rows").Value = boolMatrix.RowsCount.ToString();
+
+            xElement.Attribute("Columns").Value = boolMatrix.CollumnsCount.ToString();
+
+            _xDocument.Save(_xDocumentName);
         }
 
         public int Search(BoolMatrix boolMatrix)
