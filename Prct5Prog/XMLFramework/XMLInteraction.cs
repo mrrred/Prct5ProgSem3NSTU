@@ -20,8 +20,20 @@ namespace Prct5Prog.XMLFramework
             get { return _xDocument; }
         }
 
+        public string XMLMatrixElementName { get; }
+
+        public string IDAttributeName { get; }
+
+        public string RowsCountAttributeName { get; }
+
+        public string ColumnCountAttributeName { get; }
+
         private readonly string _xDocumentName;
-        public XMLInteraction(string xDocumentName)
+        public XMLInteraction(string xDocumentName,
+            string xmlMatrixElementName = "Matrix",
+            string idAttributeName = "Id", 
+            string rowsCountAttributeName = "Rows", 
+            string columnCountAttributeName = "Column")
         {
             _xDocumentName = xDocumentName;
 
@@ -34,6 +46,11 @@ namespace Prct5Prog.XMLFramework
                 _xDocument = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement("Matrices"));
                 _xDocument.Save(xDocumentName);
             }
+
+            XMLMatrixElementName = xmlMatrixElementName;
+            IDAttributeName = idAttributeName;
+            RowsCountAttributeName = rowsCountAttributeName;
+            ColumnCountAttributeName = columnCountAttributeName;
         }
 
         // Перенести в parse
@@ -94,10 +111,10 @@ namespace Prct5Prog.XMLFramework
 
         public void Add(BoolMatrix boolMatrix)
         {
-            XElement xElement = new XElement("Matrix",
-                new XAttribute("Id", _xDocument.Root.Elements().Count()),
-                new XAttribute("Rows", boolMatrix.RowsCount),
-                new XAttribute("Columns", boolMatrix.CollumnsCount)
+            XElement xElement = new XElement(XMLMatrixElementName,
+                new XAttribute(IDAttributeName, _xDocument.Root.Elements().Count()),
+                new XAttribute(RowsCountAttributeName, boolMatrix.RowsCount),
+                new XAttribute(ColumnCountAttributeName, boolMatrix.CollumnsCount)
                 );
 
             xElement.Value = BoolMAtrixToString(boolMatrix);
@@ -109,7 +126,7 @@ namespace Prct5Prog.XMLFramework
 
         public BoolMatrix GetElement(int id)
         {
-            XElement searchElement = _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute("Id").Value) == id);
+            XElement searchElement = _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute(IDAttributeName).Value) == id);
 
             return stringToBoolMatrix(searchElement.Value);
         }
@@ -118,13 +135,13 @@ namespace Prct5Prog.XMLFramework
         {
             BoolMatrix boolMatrix = GetElement(id);
 
-            _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute("Id").Value) == id).Remove();
+            _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute(IDAttributeName).Value) == id).Remove();
 
-            var xDocELement = _xDocument.Root.Elements().Where(el => Convert.ToInt32(el.Attribute("Id").Value) > id);
+            var xDocELement = _xDocument.Root.Elements().Where(el => Convert.ToInt32(el.Attribute(IDAttributeName).Value) > id);
 
             foreach (var el in xDocELement)
             {
-                el.Attribute("Id").Value = (Convert.ToInt32(el.Attribute("Id").Value) - 1).ToString();
+                el.Attribute(IDAttributeName).Value = (Convert.ToInt32(el.Attribute(IDAttributeName).Value) - 1).ToString();
             }
 
             _xDocument.Save(_xDocumentName);
@@ -134,13 +151,13 @@ namespace Prct5Prog.XMLFramework
 
         public void EditElement(int id, BoolMatrix boolMatrix)
         {
-            XElement xElement = _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute("Id").Value) == id);
+            XElement xElement = _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute(IDAttributeName).Value) == id);
 
             xElement.Value = BoolMAtrixToString(boolMatrix);
 
-            xElement.Attribute("Rows").Value = boolMatrix.RowsCount.ToString();
+            xElement.Attribute(RowsCountAttributeName).Value = boolMatrix.RowsCount.ToString();
 
-            xElement.Attribute("Columns").Value = boolMatrix.CollumnsCount.ToString();
+            xElement.Attribute(ColumnCountAttributeName).Value = boolMatrix.CollumnsCount.ToString();
 
             _xDocument.Save(_xDocumentName);
         }
@@ -152,7 +169,7 @@ namespace Prct5Prog.XMLFramework
 
             foreach (var a in _xDocument.Root.Elements().Where(el => AttributeMatching(el, attributes)))
             {
-                result.Add(a.Attribute("Id").Value, stringToBoolMatrix(a.Value));
+                result.Add(a.Attribute(IDAttributeName).Value, stringToBoolMatrix(a.Value));
             }
 
             return result;
