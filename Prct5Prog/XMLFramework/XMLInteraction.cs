@@ -35,6 +35,7 @@ namespace Prct5Prog.XMLFramework
             }
         }
 
+        // Перенести в parse
         private string BoolMAtrixToString(BoolMatrix boolMatrix)
         {
             StringBuilder stringBoolMatrix = new StringBuilder();
@@ -56,6 +57,7 @@ namespace Prct5Prog.XMLFramework
             return stringBoolMatrix.ToString();
         }
 
+        // Перенести в parse
         private BoolMatrix stringToBoolMatrix(string stringBoolMatrix, string rowsSeparator = ";", string collumnsSeparator = ",")
         {
             if (string.IsNullOrEmpty(stringBoolMatrix))
@@ -113,7 +115,20 @@ namespace Prct5Prog.XMLFramework
 
         public BoolMatrix Pop(int id)
         {
-            throw new NotImplementedException();
+            BoolMatrix boolMatrix = GetEmelent(id);
+
+            _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute("Id").Value) == id).Remove();
+
+            var xDocELement = _xDocument.Root.Elements().Where(el => Convert.ToInt32(el.Attribute("Id").Value) > id);
+
+            foreach (var el in xDocELement)
+            {
+                el.Attribute("Id").Value = (Convert.ToInt32(el.Attribute("Id").Value) - 1).ToString();
+            }
+
+            _xDocument.Save(_xDocumentName);
+
+            return boolMatrix;
         }
 
         public void EditElement(int id, BoolMatrix boolMatrix)
