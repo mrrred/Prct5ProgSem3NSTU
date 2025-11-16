@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -50,7 +51,42 @@ namespace Prct5Prog.XMLFramework
                 stringBoolMatrix.Append(';');
             }
 
+            stringBoolMatrix.Remove(stringBoolMatrix.Length - 1, 1);
+
             return stringBoolMatrix.ToString();
+        }
+
+        private BoolMatrix stringToBoolMatrix(string stringBoolMatrix, string rowsSeparator = ";", string collumnsSeparator = ",")
+        {
+            if (string.IsNullOrEmpty(stringBoolMatrix))
+                throw new ArgumentException("Input string cannot be null or empty");
+
+            var rowsStrings = stringBoolMatrix.Split(rowsSeparator, StringSplitOptions.RemoveEmptyEntries);
+
+            int rows = rowsStrings.Length;
+
+            int collumns = rowsStrings[0].Split(collumnsSeparator).Length;
+
+            // Проверки на 0 добавить
+
+            BoolMatrix resultBoolMatrix = new(rows, collumns);
+
+            for (int i = 0; i < rowsStrings.Length; i++)
+            {
+                var collumnsArray = rowsStrings[i].Split(collumnsSeparator, StringSplitOptions.RemoveEmptyEntries);
+
+                if (collumnsArray.Length != collumns)
+                {
+                    throw new ArgumentException("The length of the lines is not uniform");
+                }
+
+                for (int j = 0; j < collumnsArray.Length; j++)
+                {
+                    resultBoolMatrix[i, j] = collumnsArray[j] == "1" ? true : false;
+                }
+            }
+
+            return resultBoolMatrix;
         }
 
         public void Add(BoolMatrix boolMatrix)
@@ -70,7 +106,9 @@ namespace Prct5Prog.XMLFramework
 
         public BoolMatrix GetEmelent(int id)
         {
-            throw new NotImplementedException();
+            XElement searchElement = _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute("Id").Value) == id);
+
+            return stringToBoolMatrix(searchElement.Value);
         }
 
         public BoolMatrix Pop(int id)
