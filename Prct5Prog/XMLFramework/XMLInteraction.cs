@@ -1,24 +1,19 @@
-﻿using BoolMatrixFramework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
+using Prct5Prog.Extensions;
+using BoolMatrixFramework;
 
 namespace Prct5Prog.XMLFramework
 {
     class XMLInteraction : IXMLInteraction
     {
-        private readonly XDocument _xDocument;
+        public XDocument XDocument { get; }
 
-        public XDocument XDocument
-        {
-            get { return _xDocument; }
-        }
+        public string XMLDocumentName { get; }
+
+        public string XMLRootName { get; }
 
         public string XMLMatrixElementName { get; }
 
@@ -28,148 +23,130 @@ namespace Prct5Prog.XMLFramework
 
         public string ColumnCountAttributeName { get; }
 
-        private readonly string _xDocumentName;
         public XMLInteraction(string xDocumentName,
+            string xmlRootName = "Matrices",
             string xmlMatrixElementName = "Matrix",
-            string idAttributeName = "Id", 
-            string rowsCountAttributeName = "Rows", 
+            string idAttributeName = "Id",
+            string rowsCountAttributeName = "Rows",
             string columnCountAttributeName = "Column")
         {
-            _xDocumentName = xDocumentName;
+            XMLDocumentName = xDocumentName
+                ?? throw new ArgumentNullException(nameof(xDocumentName));
+
+            XMLRootName = xmlRootName
+                ?? throw new ArgumentNullException(nameof(xDocumentName));
+
+            XMLMatrixElementName = xmlMatrixElementName
+                ?? throw new ArgumentNullException(nameof(xmlMatrixElementName));
+
+            IDAttributeName = idAttributeName
+                ?? throw new ArgumentNullException(nameof(idAttributeName));
+
+            RowsCountAttributeName = rowsCountAttributeName
+                ?? throw new ArgumentNullException(nameof(rowsCountAttributeName));
+
+            ColumnCountAttributeName = columnCountAttributeName
+                ?? throw new ArgumentNullException(nameof(columnCountAttributeName));
 
             try
             {
-                _xDocument = XDocument.Load(xDocumentName);
+                XDocument = XDocument.Load(xDocumentName);
             }
             catch (FileNotFoundException)
             {
-                _xDocument = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement("Matrices"));
-                _xDocument.Save(xDocumentName);
+                XDocument = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement(XMLRootName));
+                XDocument.Save(XMLDocumentName);
             }
 
-            XMLMatrixElementName = xmlMatrixElementName;
-            IDAttributeName = idAttributeName;
-            RowsCountAttributeName = rowsCountAttributeName;
-            ColumnCountAttributeName = columnCountAttributeName;
-        }
-
-        // Перенести в parse
-        private string BoolMAtrixToString(BoolMatrix boolMatrix)
-        {
-            StringBuilder stringBoolMatrix = new StringBuilder();
-
-            for (int i = 0; i < boolMatrix.RowsCount; i++)
-            {
-                for (int j = 0; j < boolMatrix.CollumnsCount; j++)
-                {
-                    if (boolMatrix[i, j]) stringBoolMatrix.Append("1,");
-                    else stringBoolMatrix.Append("0,");
-                }
-
-                stringBoolMatrix.Remove(stringBoolMatrix.Length - 1, 1);
-                stringBoolMatrix.Append(';');
-            }
-
-            stringBoolMatrix.Remove(stringBoolMatrix.Length - 1, 1);
-
-            return stringBoolMatrix.ToString();
-        }
-
-        // Перенести в parse
-        private BoolMatrix stringToBoolMatrix(string stringBoolMatrix, string rowsSeparator = ";", string collumnsSeparator = ",")
-        {
-            if (string.IsNullOrEmpty(stringBoolMatrix))
-                throw new ArgumentException("Input string cannot be null or empty");
-
-            var rowsStrings = stringBoolMatrix.Split(rowsSeparator, StringSplitOptions.RemoveEmptyEntries);
-
-            int rows = rowsStrings.Length;
-
-            int collumns = rowsStrings[0].Split(collumnsSeparator).Length;
-
-            // Проверки на 0 добавить
-
-            BoolMatrix resultBoolMatrix = new(rows, collumns);
-
-            for (int i = 0; i < rowsStrings.Length; i++)
-            {
-                var collumnsArray = rowsStrings[i].Split(collumnsSeparator, StringSplitOptions.RemoveEmptyEntries);
-
-                if (collumnsArray.Length != collumns)
-                {
-                    throw new ArgumentException("The length of the lines is not uniform");
-                }
-
-                for (int j = 0; j < collumnsArray.Length; j++)
-                {
-                    resultBoolMatrix[i, j] = collumnsArray[j] == "1" ? true : false;
-                }
-            }
-
-            return resultBoolMatrix;
+            if (XDocument?.Root == null)
+                throw new InvalidOperationException("XML document root is missing");
         }
 
         public void Add(BoolMatrix boolMatrix)
         {
+            ArgumentNullException.ThrowIfNull(boolMatrix, nameof(boolMatrix));
+
             XElement xElement = new XElement(XMLMatrixElementName,
-                new XAttribute(IDAttributeName, _xDocument.Root.Elements().Count()),
+                new XAttribute(IDAttributeName, XDocument!.Root!.Elements(XMLMatrixElementName).Count()),
                 new XAttribute(RowsCountAttributeName, boolMatrix.RowsCount),
                 new XAttribute(ColumnCountAttributeName, boolMatrix.CollumnsCount)
                 );
 
-            xElement.Value = BoolMAtrixToString(boolMatrix);
+            xElement.Value = boolMatrix.ConvertToString();
 
-            _xDocument.Root.Add(xElement);
+            XDocument.Root.Add(xElement);
 
-            _xDocument.Save(_xDocumentName);
+            XDocument.Save(XMLDocumentName);
         }
 
         public BoolMatrix GetElement(int id)
         {
-            XElement searchElement = _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute(IDAttributeName).Value) == id);
+            XElement searchElement = XDocument!.Root!
+                .Elements(XMLMatrixElementName)
+                .FirstOrDefault(el => Convert.ToInt32(el?.Attribute(IDAttributeName)?.Value
+                ?? throw new ArgumentException($"Attribute {IDAttributeName} not found", nameof(IDAttributeName))) == id)
+                ?? throw new ArgumentException($"Element with ID {id} not found", nameof(id));
 
-            return stringToBoolMatrix(searchElement.Value);
+            return searchElement.Value.ConvertToBoolMatrix();
         }
 
         public BoolMatrix Pop(int id)
         {
-            BoolMatrix boolMatrix = GetElement(id);
+            var element = XDocument!.Root!
+                .Elements(XMLMatrixElementName)
+                .FirstOrDefault(el => Convert.ToInt32(el?.Attribute(IDAttributeName)?.Value
+                ?? throw new ArgumentException($"Attribute {IDAttributeName} not found", nameof(IDAttributeName))) == id)
+                ?? throw new ArgumentException($"Element with ID {id} not found", nameof(id));
 
-            _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute(IDAttributeName).Value) == id).Remove();
+            var boolMatrix = element.Value.ConvertToBoolMatrix();
+            element.Remove();
 
-            var xDocELement = _xDocument.Root.Elements().Where(el => Convert.ToInt32(el.Attribute(IDAttributeName).Value) > id);
+            var xDocELement = XDocument!.Root!
+                .Elements(XMLMatrixElementName)
+                .Where(el => Convert.ToInt32(el?.Attribute(IDAttributeName)?.Value
+                ?? throw new ArgumentException($"Attribute {IDAttributeName} not found", nameof(IDAttributeName))) > id);
 
             foreach (var el in xDocELement)
             {
-                el.Attribute(IDAttributeName).Value = (Convert.ToInt32(el.Attribute(IDAttributeName).Value) - 1).ToString();
+                if (el != null && el.Attribute(IDAttributeName) != null)
+                {
+                    el!.Attribute(IDAttributeName)!.Value
+                        = (Convert.ToInt32(el.Attribute(IDAttributeName)?.Value
+                        ?? throw new ArgumentException($"Attribute {IDAttributeName} not found", nameof(IDAttributeName))) - 1).ToString();
+                }
             }
 
-            _xDocument.Save(_xDocumentName);
+            XDocument.Save(XMLDocumentName);
 
             return boolMatrix;
         }
 
         public void EditElement(int id, BoolMatrix boolMatrix)
         {
-            XElement xElement = _xDocument.Root.Elements().FirstOrDefault(el => Convert.ToInt32(el.Attribute(IDAttributeName).Value) == id);
+            XElement xElement = XDocument!.Root!
+                .Elements(XMLMatrixElementName)
+                .FirstOrDefault(el => Convert.ToInt32(el?.Attribute(IDAttributeName)?.Value
+                ?? throw new ArgumentException($"Attribute {IDAttributeName} not found", nameof(IDAttributeName))) == id)
+                ?? throw new ArgumentException($"Element with ID {id} not found", nameof(id));
 
-            xElement.Value = BoolMAtrixToString(boolMatrix);
+            xElement.Value = boolMatrix.ConvertToString();
 
-            xElement.Attribute(RowsCountAttributeName).Value = boolMatrix.RowsCount.ToString();
+            xElement.SetAttributeValue(RowsCountAttributeName, boolMatrix.RowsCount.ToString());
 
-            xElement.Attribute(ColumnCountAttributeName).Value = boolMatrix.CollumnsCount.ToString();
+            xElement.SetAttributeValue(ColumnCountAttributeName, boolMatrix.CollumnsCount.ToString());
 
-            _xDocument.Save(_xDocumentName);
+            XDocument.Save(XMLDocumentName);
         }
 
-        // Searches for matrices that have attributes matching those in XML files and returns a dictionary of[id] : [BoolMatrix]
         public Dictionary<string, BoolMatrix> SearchOnAttributes(Dictionary<string, string>? attributes = null)
         {
             Dictionary<string, BoolMatrix> result = [];
 
-            foreach (var a in _xDocument.Root.Elements().Where(el => AttributeMatching(el, attributes)))
+            foreach (var a in XDocument!.Root!.Elements().Where(el => AttributeMatching(el, attributes)))
             {
-                result.Add(a.Attribute(IDAttributeName).Value, stringToBoolMatrix(a.Value));
+                result.Add(a?.Attribute(IDAttributeName)?.Value
+                    ?? throw new ArgumentException($"Attribute {IDAttributeName} not found", nameof(IDAttributeName)),
+                    a.Value.ConvertToBoolMatrix());
             }
 
             return result;
@@ -181,7 +158,10 @@ namespace Prct5Prog.XMLFramework
 
             foreach (var (attribute, value) in attributes)
             {
-                if (xElement.Attribute(attribute).Value != value)
+                string valueOnAttribute = xElement?.Attribute(attribute)?.Value
+                    ?? throw new ArgumentException($"Attribute {attribute} not found", nameof(attribute));
+
+                if (valueOnAttribute != value)
                 {
                     return false;
                 }
