@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace XMLFramework
 {
-    public interface IXMLInteraction
+    public interface IXMLDocumentManager
     {
         public XDocument XDocument { get; }
 

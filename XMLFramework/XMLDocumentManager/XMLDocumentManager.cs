@@ -7,7 +7,7 @@ using BoolMatrixFramework;
 
 namespace XMLFramework
 {
-    public class XMLInteraction : IXMLInteraction
+    public class XMLDocumentManager : IXMLDocumentManager
     {
         public XDocument XDocument { get; }
 
@@ -23,7 +23,7 @@ namespace XMLFramework
 
         public string ColumnCountAttributeName { get; }
 
-        public XMLInteraction(string xDocumentName,
+        public XMLDocumentManager(string xDocumentName,
             string xmlRootName = "Matrices",
             string xmlMatrixElementName = "Matrix",
             string idAttributeName = "Id",
