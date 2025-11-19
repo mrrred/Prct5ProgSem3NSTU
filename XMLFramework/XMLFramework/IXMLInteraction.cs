@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Prct5Prog.XMLFramework
+namespace XMLFramework
 {
-    interface IXMLInteraction
+    public interface IXMLInteraction
     {
         public XDocument XDocument { get; }
 

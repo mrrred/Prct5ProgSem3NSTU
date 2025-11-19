@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
-using Prct5Prog.Extensions;
+using XMLFramework.Extensions;
 using BoolMatrixFramework;
 
-namespace Prct5Prog.XMLFramework
+namespace XMLFramework
 {
-    class XMLInteraction : IXMLInteraction
+    public class XMLInteraction : IXMLInteraction
     {
         public XDocument XDocument { get; }
 

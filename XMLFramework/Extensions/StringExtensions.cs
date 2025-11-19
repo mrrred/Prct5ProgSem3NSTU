@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prct5Prog.Extensions
+namespace XMLFramework.Extensions
 {
     static class StringExtensions
     {

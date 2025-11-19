@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BoolMatrixFramework;
 
-namespace Prct5Prog.Extensions
+namespace XMLFramework.Extensions
 {
     static class BoolMatrixExtensions
     {
