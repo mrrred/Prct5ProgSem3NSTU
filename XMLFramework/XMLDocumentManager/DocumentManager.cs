@@ -3,15 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
-using XMLFramework.Deserializators;
+using XMLFramework.Deserializators.Abstractions;
 using XMLFramework.Extensions;
-using XMLFramework.Serializators;
-using XMLFramework.XMLConfigurations;
-using XMLFramework.XMLIdManagers;
+using XMLFramework.Serializators.Abstractions;
+using XMLFramework.XMLConfigurations.Abstractions;
+using XMLFramework.XMLDocumentManager.Abstractions;
+using XMLFramework.XMLIdManagers.Abstractions;
+using XMLFramework.XMLInteraction.Abstractions;
 
-namespace XMLFramework
+namespace XMLFramework.XMLDocumentManager
 {
-    public class XMLDocumentManager2 : IXMLDocumentManager2<BoolMatrix>
+    public class DocumentManager : IDocumentManager<BoolMatrix>
     {
         public string XMLDocumentName { get; }
 
@@ -25,11 +27,14 @@ namespace XMLFramework
 
         private IDeserializator<BoolMatrix> _boolMatrixDeserializator;
 
-        public XMLDocumentManager2(string xDocumentName,
+        private IXDocEditor<BoolMatrix> _xDocEditor;
+
+        public DocumentManager(string xDocumentName,
             IXMLBoolMatrixConfiguration config,
             IXMLIdManager idManager,
             ISerializator<BoolMatrix> boolMatrixSerializator,
-            IDeserializator<BoolMatrix> boolMatrixDeserializator)
+            IDeserializator<BoolMatrix> boolMatrixDeserializator,
+            IXDocEditor<BoolMatrix> xMLEditor)
         {
             XMLDocumentName = xDocumentName
                 ?? throw new ArgumentNullException(nameof(xDocumentName));
@@ -45,6 +50,8 @@ namespace XMLFramework
 
             _boolMatrixDeserializator = boolMatrixDeserializator
                 ?? throw new ArgumentNullException(nameof(boolMatrixDeserializator));
+
+            _xDocEditor = xMLEditor;
 
             try
             {
@@ -64,15 +71,7 @@ namespace XMLFramework
         {
             ArgumentNullException.ThrowIfNull(boolMatrix, nameof(boolMatrix));
 
-            XElement xElement = new XElement(_config.XMLMatrixElementName,
-                new XAttribute(_config.IDAttributeName, _idManager.NextId()),
-                new XAttribute(_config.RowsCountAttributeName, boolMatrix.RowsCount),
-                new XAttribute(_config.ColumnCountAttributeName, boolMatrix.CollumnsCount)
-                );
-
-            xElement.Value = _boolMatrixSerializator.Serialization(boolMatrix);
-
-            XDocument.Root.Add(xElement);
+            _xDocEditor.Add(boolMatrix);
 
             XDocument.Save(XMLDocumentName);
         }

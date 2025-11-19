@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XMLFramework.XMLBuilder
+namespace XMLFramework.XMLInteraction.Abstractions
 {
-    public interface IXMLEditor<T>
+    public interface IXDocEditor<T>
     {
         void Add(T item);
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XMLFramework.XMLConfigurations
+namespace XMLFramework.XMLConfigurations.Abstractions
 {
     public interface IXMLBoolMatrixConfiguration : IXMLConfiguration
     {

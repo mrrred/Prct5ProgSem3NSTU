@@ -6,10 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using XMLFramework.Serializators;
-using XMLFramework.XMLConfigurations;
+using XMLFramework.Serializators.Abstractions;
+using XMLFramework.XMLConfigurations.Abstractions;
+using XMLFramework.XMLInteraction.Abstractions;
 
-namespace XMLFramework.XMLBuilder
+namespace XMLFramework.XMLInteraction
 {
     public class XMLBoolMatrixElementBuilder : IXmlElementBuilder<BoolMatrix>
     {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using XMLFramework.XMLConfigurations;
 
-namespace XMLFramework.XMLBuilder
+namespace XMLFramework.XMLInteraction.Abstractions
 {
     public interface IXmlElementBuilder<T>
     {

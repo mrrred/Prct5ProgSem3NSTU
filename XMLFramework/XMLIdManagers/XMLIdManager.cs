@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using XMLFramework.XMLConfigurations;
+using XMLFramework.XMLConfigurations.Abstractions;
+using XMLFramework.XMLIdManagers.Abstractions;
 
 namespace XMLFramework.XMLIdManagers
 {

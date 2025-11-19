@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XMLFramework.Serializators
+namespace XMLFramework.Serializators.Abstractions
 {
     public interface ISerializator<T>
     {

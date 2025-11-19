@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XMLFramework.Deserializators
+namespace XMLFramework.Deserializators.Abstractions
 {
     public interface IDeserializator<T>
     {

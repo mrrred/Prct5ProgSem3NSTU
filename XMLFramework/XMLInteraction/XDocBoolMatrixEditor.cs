@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using XMLFramework.XMLConfigurations;
-using XMLFramework.XMLIdManagers;
+using XMLFramework.XMLConfigurations.Abstractions;
+using XMLFramework.XMLIdManagers.Abstractions;
+using XMLFramework.XMLInteraction.Abstractions;
 
-namespace XMLFramework.XMLBuilder
+namespace XMLFramework.XMLInteraction
 {
-    public class XMLBoolMatrixEditor : IXMLEditor<BoolMatrix>
+    public class XDocBoolMatrixEditor : IXDocEditor<BoolMatrix>
     {
         private XDocument _xDoc;
 
@@ -20,7 +21,7 @@ namespace XMLFramework.XMLBuilder
 
         private IXMLIdManager _idManager;
 
-        public XMLBoolMatrixEditor(XDocument xDocument, IXMLBoolMatrixConfiguration config, 
+        public XDocBoolMatrixEditor(XDocument xDocument, IXMLBoolMatrixConfiguration config, 
             IXmlElementBuilder<BoolMatrix> xmlElementBuilder, IXMLIdManager idManager)
         {
             _xDoc = xDocument;

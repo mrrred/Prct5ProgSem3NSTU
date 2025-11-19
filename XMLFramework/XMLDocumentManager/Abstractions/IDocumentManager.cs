@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace XMLFramework
+namespace XMLFramework.XMLDocumentManager.Abstractions
 {
-    public interface IXMLDocumentManager2<T>
+    public interface IDocumentManager<T>
     {
         public XDocument XDocument { get; }
 
