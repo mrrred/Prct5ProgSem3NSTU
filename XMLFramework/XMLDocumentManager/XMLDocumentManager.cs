@@ -4,10 +4,11 @@ using System.IO;
 using System.Xml.Linq;
 using XMLFramework.Extensions;
 using BoolMatrixFramework;
+using XMLFramework.XMLDocumentManager.Abstractions;
 
 namespace XMLFramework
 {
-    public class XMLDocumentManager : IXMLDocumentManager
+    public class XmlDocumentManager : IXMLDocumentManager
     {
         public XDocument XDocument { get; }
 
@@ -23,7 +24,7 @@ namespace XMLFramework
 
         public string ColumnCountAttributeName { get; }
 
-        public XMLDocumentManager(string xDocumentName,
+        public XmlDocumentManager(string xDocumentName,
             string xmlRootName = "Matrices",
             string xmlMatrixElementName = "Matrix",
             string idAttributeName = "Id",

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BoolMatrixFramework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,8 +11,8 @@ namespace XMLFramework.XMLInteraction.Abstractions
     {
         void Add(T item);
 
-        void Remove(int id);
+        BoolMatrix Pop(int id);
 
-        void Edit(T item);
+        void Edit(T item, int id);
     }
 }

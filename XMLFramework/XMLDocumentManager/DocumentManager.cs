@@ -3,12 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
-using XMLFramework.Deserializators.Abstractions;
-using XMLFramework.Extensions;
-using XMLFramework.Serializators.Abstractions;
 using XMLFramework.XMLConfigurations.Abstractions;
 using XMLFramework.XMLDocumentManager.Abstractions;
-using XMLFramework.XMLIdManagers.Abstractions;
 using XMLFramework.XMLInteraction.Abstractions;
 
 namespace XMLFramework.XMLDocumentManager
@@ -21,20 +17,14 @@ namespace XMLFramework.XMLDocumentManager
 
         private IXMLBoolMatrixConfiguration _config;
 
-        private IXMLIdManager _idManager;
-
-        private ISerializator<BoolMatrix> _boolMatrixSerializator;
-
-        private IDeserializator<BoolMatrix> _boolMatrixDeserializator;
-
         private IXDocEditor<BoolMatrix> _xDocEditor;
+
+        private IXDocSearcher<BoolMatrix> _xDocSearcher;
 
         public DocumentManager(string xDocumentName,
             IXMLBoolMatrixConfiguration config,
-            IXMLIdManager idManager,
-            ISerializator<BoolMatrix> boolMatrixSerializator,
-            IDeserializator<BoolMatrix> boolMatrixDeserializator,
-            IXDocEditor<BoolMatrix> xMLEditor)
+            IXDocEditor<BoolMatrix> xMLEditor,
+            IXDocSearcher<BoolMatrix> xDocSearcher)
         {
             XMLDocumentName = xDocumentName
                 ?? throw new ArgumentNullException(nameof(xDocumentName));
@@ -42,16 +32,9 @@ namespace XMLFramework.XMLDocumentManager
             _config = config
                 ?? throw new ArgumentNullException(nameof(config));
 
-            _idManager = idManager
-                ?? throw new ArgumentNullException(nameof(idManager));
-
-            _boolMatrixSerializator = boolMatrixSerializator
-                ?? throw new ArgumentNullException(nameof(boolMatrixSerializator));
-
-            _boolMatrixDeserializator = boolMatrixDeserializator
-                ?? throw new ArgumentNullException(nameof(boolMatrixDeserializator));
-
             _xDocEditor = xMLEditor;
+
+            _xDocSearcher = xDocSearcher;
 
             try
             {
@@ -78,22 +61,27 @@ namespace XMLFramework.XMLDocumentManager
 
         public BoolMatrix GetElement(int id)
         {
-            throw new NotImplementedException();
+            return _xDocSearcher.SearchOnId(id);
         }
 
         public BoolMatrix Pop(int id)
         {
-            throw new NotImplementedException();
+            var boolMatrix = _xDocEditor.Pop(id);
+
+            XDocument.Save(XMLDocumentName);
+
+            return boolMatrix;
+
         }
 
         public void EditElement(int id, BoolMatrix boolMatrix)
         {
-            throw new NotImplementedException();
+            _xDocEditor.Edit(boolMatrix, id);
         }
 
         public Dictionary<string, BoolMatrix> SearchOnAttributes(Dictionary<string, string>? attributes = null)
         {
-            throw new NotImplementedException();
+            return _xDocSearcher.SearchOnAttribute(attributes);
         }
     }
 }
