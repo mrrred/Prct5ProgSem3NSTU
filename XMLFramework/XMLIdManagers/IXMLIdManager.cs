@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XMLFramework.Serializators
+namespace XMLFramework.XMLIdManagers
 {
-    public interface ISerializator<T>
+    public interface IXMLIdManager
     {
-        public string Serialization(T obj);
+        int NextId();
     }
 }

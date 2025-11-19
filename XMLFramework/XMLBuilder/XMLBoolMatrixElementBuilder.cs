@@ -1,0 +1,44 @@
+﻿using BoolMatrixFramework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.Xml.Serialization;
+using XMLFramework.Serializators;
+using XMLFramework.XMLConfigurations;
+
+namespace XMLFramework.XMLBuilder
+{
+    public class XMLBoolMatrixElementBuilder : IXmlElementBuilder<BoolMatrix>
+    {
+        private XDocument _xDoc;
+
+        private IXMLBoolMatrixConfiguration _config;
+
+        private ISerializator<BoolMatrix> _serializator;
+
+        public XMLBoolMatrixElementBuilder(XDocument xDoc, IXMLBoolMatrixConfiguration config, ISerializator<BoolMatrix> serializator)
+        {
+            _xDoc = xDoc;
+
+            _config = config;
+
+            _serializator = serializator;
+        }
+
+        public XElement BuildElement(BoolMatrix boolMatrix, int id)
+        {
+            XElement xElement = new XElement(_config.XMLMatrixElementName,
+                new XAttribute(_config.IDAttributeName, _xDoc!.Root!.Elements(_config.XMLMatrixElementName).Count()),
+                new XAttribute(_config.RowsCountAttributeName, boolMatrix.RowsCount),
+                new XAttribute(_config.ColumnCountAttributeName, boolMatrix.CollumnsCount)
+                );
+
+            xElement.Value = _serializator.Serialization(boolMatrix);
+
+            return xElement;
+        }
+    }
+}

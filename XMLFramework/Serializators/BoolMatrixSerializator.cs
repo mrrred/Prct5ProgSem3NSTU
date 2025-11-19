@@ -9,7 +9,7 @@ namespace XMLFramework.Serializators
 {
     public class BoolMatrixSerializator : ISerializator<BoolMatrix>
     {
-        public string Deserialization(BoolMatrix boolMatrix)
+        public string Serialization(BoolMatrix boolMatrix)
         {
             StringBuilder stringBoolMatrix = new StringBuilder();
 

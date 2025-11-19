@@ -1,52 +1,50 @@
-﻿using System;
+﻿using BoolMatrixFramework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
+using XMLFramework.Deserializators;
 using XMLFramework.Extensions;
-using BoolMatrixFramework;
+using XMLFramework.Serializators;
+using XMLFramework.XMLConfigurations;
+using XMLFramework.XMLIdManagers;
 
 namespace XMLFramework
 {
-    public class XMLDocumentManager2 : IXMLDocumentManager
+    public class XMLDocumentManager2 : IXMLDocumentManager2<BoolMatrix>
     {
-        public XDocument XDocument { get; }
-
         public string XMLDocumentName { get; }
 
-        public string XMLRootName { get; }
+        public XDocument XDocument { get; }
 
-        public string XMLMatrixElementName { get; }
+        private IXMLBoolMatrixConfiguration _config;
 
-        public string IDAttributeName { get; }
+        private IXMLIdManager _idManager;
 
-        public string RowsCountAttributeName { get; }
+        private ISerializator<BoolMatrix> _boolMatrixSerializator;
 
-        public string ColumnCountAttributeName { get; }
+        private IDeserializator<BoolMatrix> _boolMatrixDeserializator;
 
         public XMLDocumentManager2(string xDocumentName,
-            string xmlRootName = "Matrices",
-            string xmlMatrixElementName = "Matrix",
-            string idAttributeName = "Id",
-            string rowsCountAttributeName = "Rows",
-            string columnCountAttributeName = "Column")
+            IXMLBoolMatrixConfiguration config,
+            IXMLIdManager idManager,
+            ISerializator<BoolMatrix> boolMatrixSerializator,
+            IDeserializator<BoolMatrix> boolMatrixDeserializator)
         {
             XMLDocumentName = xDocumentName
                 ?? throw new ArgumentNullException(nameof(xDocumentName));
 
-            XMLRootName = xmlRootName
-                ?? throw new ArgumentNullException(nameof(xDocumentName));
+            _config = config
+                ?? throw new ArgumentNullException(nameof(config));
 
-            XMLMatrixElementName = xmlMatrixElementName
-                ?? throw new ArgumentNullException(nameof(xmlMatrixElementName));
+            _idManager = idManager
+                ?? throw new ArgumentNullException(nameof(idManager));
 
-            IDAttributeName = idAttributeName
-                ?? throw new ArgumentNullException(nameof(idAttributeName));
+            _boolMatrixSerializator = boolMatrixSerializator
+                ?? throw new ArgumentNullException(nameof(boolMatrixSerializator));
 
-            RowsCountAttributeName = rowsCountAttributeName
-                ?? throw new ArgumentNullException(nameof(rowsCountAttributeName));
-
-            ColumnCountAttributeName = columnCountAttributeName
-                ?? throw new ArgumentNullException(nameof(columnCountAttributeName));
+            _boolMatrixDeserializator = boolMatrixDeserializator
+                ?? throw new ArgumentNullException(nameof(boolMatrixDeserializator));
 
             try
             {
@@ -54,7 +52,7 @@ namespace XMLFramework
             }
             catch (FileNotFoundException)
             {
-                XDocument = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement(XMLRootName));
+                XDocument = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement(_config.XMLRootName));
                 XDocument.Save(XMLDocumentName);
             }
 
@@ -66,13 +64,13 @@ namespace XMLFramework
         {
             ArgumentNullException.ThrowIfNull(boolMatrix, nameof(boolMatrix));
 
-            XElement xElement = new XElement(XMLMatrixElementName,
-                new XAttribute(IDAttributeName, XDocument!.Root!.Elements(XMLMatrixElementName).Count()),
-                new XAttribute(RowsCountAttributeName, boolMatrix.RowsCount),
-                new XAttribute(ColumnCountAttributeName, boolMatrix.CollumnsCount)
+            XElement xElement = new XElement(_config.XMLMatrixElementName,
+                new XAttribute(_config.IDAttributeName, _idManager.NextId()),
+                new XAttribute(_config.RowsCountAttributeName, boolMatrix.RowsCount),
+                new XAttribute(_config.ColumnCountAttributeName, boolMatrix.CollumnsCount)
                 );
 
-            xElement.Value = boolMatrix.ConvertToString();
+            xElement.Value = _boolMatrixSerializator.Serialization(boolMatrix);
 
             XDocument.Root.Add(xElement);
 
@@ -81,93 +79,22 @@ namespace XMLFramework
 
         public BoolMatrix GetElement(int id)
         {
-            XElement searchElement = XDocument!.Root!
-                .Elements(XMLMatrixElementName)
-                .FirstOrDefault(el => Convert.ToInt32(el?.Attribute(IDAttributeName)?.Value
-                ?? throw new ArgumentException($"Attribute {IDAttributeName} not found", nameof(IDAttributeName))) == id)
-                ?? throw new ArgumentException($"Element with ID {id} not found", nameof(id));
-
-            return searchElement.Value.ConvertToBoolMatrix();
+            throw new NotImplementedException();
         }
 
         public BoolMatrix Pop(int id)
         {
-            var element = XDocument!.Root!
-                .Elements(XMLMatrixElementName)
-                .FirstOrDefault(el => Convert.ToInt32(el?.Attribute(IDAttributeName)?.Value
-                ?? throw new ArgumentException($"Attribute {IDAttributeName} not found", nameof(IDAttributeName))) == id)
-                ?? throw new ArgumentException($"Element with ID {id} not found", nameof(id));
-
-            var boolMatrix = element.Value.ConvertToBoolMatrix();
-            element.Remove();
-
-            var xDocELement = XDocument!.Root!
-                .Elements(XMLMatrixElementName)
-                .Where(el => Convert.ToInt32(el?.Attribute(IDAttributeName)?.Value
-                ?? throw new ArgumentException($"Attribute {IDAttributeName} not found", nameof(IDAttributeName))) > id);
-
-            foreach (var el in xDocELement)
-            {
-                if (el != null && el.Attribute(IDAttributeName) != null)
-                {
-                    el!.Attribute(IDAttributeName)!.Value
-                        = (Convert.ToInt32(el.Attribute(IDAttributeName)?.Value
-                        ?? throw new ArgumentException($"Attribute {IDAttributeName} not found", nameof(IDAttributeName))) - 1).ToString();
-                }
-            }
-
-            XDocument.Save(XMLDocumentName);
-
-            return boolMatrix;
+            throw new NotImplementedException();
         }
 
         public void EditElement(int id, BoolMatrix boolMatrix)
         {
-            XElement xElement = XDocument!.Root!
-                .Elements(XMLMatrixElementName)
-                .FirstOrDefault(el => Convert.ToInt32(el?.Attribute(IDAttributeName)?.Value
-                ?? throw new ArgumentException($"Attribute {IDAttributeName} not found", nameof(IDAttributeName))) == id)
-                ?? throw new ArgumentException($"Element with ID {id} not found", nameof(id));
-
-            xElement.Value = boolMatrix.ConvertToString();
-
-            xElement.SetAttributeValue(RowsCountAttributeName, boolMatrix.RowsCount.ToString());
-
-            xElement.SetAttributeValue(ColumnCountAttributeName, boolMatrix.CollumnsCount.ToString());
-
-            XDocument.Save(XMLDocumentName);
+            throw new NotImplementedException();
         }
 
         public Dictionary<string, BoolMatrix> SearchOnAttributes(Dictionary<string, string>? attributes = null)
         {
-            Dictionary<string, BoolMatrix> result = [];
-
-            foreach (var a in XDocument!.Root!.Elements().Where(el => AttributeMatching(el, attributes)))
-            {
-                result.Add(a?.Attribute(IDAttributeName)?.Value
-                    ?? throw new ArgumentException($"Attribute {IDAttributeName} not found", nameof(IDAttributeName)),
-                    a.Value.ConvertToBoolMatrix());
-            }
-
-            return result;
-        }
-
-        private bool AttributeMatching(XElement xElement, Dictionary<string, string>? attributes)
-        {
-            if (attributes == null) return true;
-
-            foreach (var (attribute, value) in attributes)
-            {
-                string valueOnAttribute = xElement?.Attribute(attribute)?.Value
-                    ?? throw new ArgumentException($"Attribute {attribute} not found", nameof(attribute));
-
-                if (valueOnAttribute != value)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            throw new NotImplementedException();
         }
     }
 }
