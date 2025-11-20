@@ -5,8 +5,81 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Prct5Prog"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Bool Matrix Manager" Height="600" Width="900">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="200"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
 
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Bool Matrix XML Manager" 
+                   FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+        <GroupBox Grid.Row="1" Grid.Column="0" Header="Matrices in XML" Margin="0,0,5,0">
+            <ListView x:Name="MatrixListView" SelectionChanged="MatrixListView_SelectionChanged">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="ID" Width="40" DisplayMemberBinding="{Binding Id}"/>
+                        <GridViewColumn Header="Rows" Width="50" DisplayMemberBinding="{Binding Rows}"/>
+                        <GridViewColumn Header="Columns" Width="60" DisplayMemberBinding="{Binding Columns}"/>
+                        <GridViewColumn Header="Matrix" Width="300">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding MatrixString}" TextWrapping="Wrap"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </GroupBox>
+
+        <StackPanel Grid.Row="1" Grid.Column="1" Margin="5,0,0,0">
+            <GroupBox Header="Operations" Margin="0,0,0,10">
+                <StackPanel>
+                    <Button x:Name="AddButton" Content="Add Matrix" Height="30" Margin="5" Click="AddButton_Click"/>
+                    <Button x:Name="EditButton" Content="Edit Selected" Height="30" Margin="5" Click="EditButton_Click"/>
+                    <Button x:Name="DeleteButton" Content="Delete Selected" Height="30" Margin="5" Click="DeleteButton_Click"/>
+                    <Button x:Name="RefreshButton" Content="Refresh List" Height="30" Margin="5" Click="RefreshButton_Click"/>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Search">
+                <StackPanel>
+                    <TextBox x:Name="SearchTextBox" Height="25" Margin="5" Text="Enter search terms..."/>
+                    <Button x:Name="SearchButton" Content="Search" Height="30" Margin="5" Click="SearchButton_Click"/>
+                    <Button x:Name="ClearSearchButton" Content="Clear Search" Height="30" Margin="5" Click="ClearSearchButton_Click"/>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+
+        <GroupBox Grid.Row="2" Grid.Column="0" Header="Selected Matrix Preview" Margin="0,5,5,5">
+            <ScrollViewer>
+                <TextBlock x:Name="PreviewTextBlock" TextWrapping="Wrap" FontFamily="Courier New"/>
+            </ScrollViewer>
+        </GroupBox>
+
+        <GroupBox Grid.Row="2" Grid.Column="1" Header="Matrix Details" Margin="5,5,0,5">
+            <ScrollViewer>
+                <StackPanel>
+                    <TextBlock x:Name="DetailsTextBlock" TextWrapping="Wrap"/>
+                </StackPanel>
+            </ScrollViewer>
+        </GroupBox>
+
+        <StatusBar Grid.Row="3" Grid.ColumnSpan="2">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusTextBlock" Text="Ready"/>
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock x:Name="CountTextBlock" Text="Total: 0 matrices"/>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>
