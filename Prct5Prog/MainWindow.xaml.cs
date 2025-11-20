@@ -4,22 +4,15 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using BoolMatrixFramework;
+using Prct5Prog.Models;
+using Prct5Prog.Services;
 
 namespace Prct5Prog
 {
     public partial class MainWindow : Window
     {
-        private XMLInteraction _xmlInteraction;
+        private MatrixService _matrixService;
         private List<MatrixDisplayItem> _matrices;
-
-        public class MatrixDisplayItem
-        {
-            public int Id { get; set; }
-            public int Rows { get; set; }
-            public int Columns { get; set; }
-            public string MatrixString { get; set; }
-            public BoolMatrix Matrix { get; set; }
-        }
 
         public MainWindow()
         {
@@ -31,7 +24,7 @@ namespace Prct5Prog
         {
             try
             {
-                _xmlInteraction = new XMLInteraction("matrices.xml");
+                _matrixService = new MatrixService("matrices.xml");
                 _matrices = new List<MatrixDisplayItem>();
                 RefreshMatrixList();
                 UpdateStatus("Application initialized successfully");
@@ -48,8 +41,7 @@ namespace Prct5Prog
             try
             {
                 _matrices.Clear();
-
-                var allMatrices = _xmlInteraction.SearchOnAttributes(new Dictionary<string, string>());
+                var allMatrices = _matrixService.GetAll();
 
                 foreach (var matrixEntry in allMatrices)
                 {
@@ -108,9 +100,9 @@ namespace Prct5Prog
                 if (dialog.ShowDialog() == true)
                 {
                     var newMatrix = dialog.GetMatrix();
-                    _xmlInteraction.Add(newMatrix);
+                    _matrixService.Add(newMatrix);
                     RefreshMatrixList();
-                    UpdateStatus($"Matrix added successfully");
+                    UpdateStatus("Matrix added successfully");
                 }
             }
             catch (Exception ex)
@@ -130,7 +122,7 @@ namespace Prct5Prog
                     if (dialog.ShowDialog() == true)
                     {
                         var updatedMatrix = dialog.GetMatrix();
-                        _xmlInteraction.EditElement(selectedItem.Id, updatedMatrix);
+                        _matrixService.Update(selectedItem.Id, updatedMatrix);
                         RefreshMatrixList();
                         UpdateStatus($"Matrix ID {selectedItem.Id} updated successfully");
                     }
@@ -159,7 +151,7 @@ namespace Prct5Prog
 
                     if (result == MessageBoxResult.Yes)
                     {
-                        _xmlInteraction.Pop(selectedItem.Id);
+                        _matrixService.Delete(selectedItem.Id);
                         RefreshMatrixList();
                         UpdateStatus($"Matrix ID {selectedItem.Id} deleted successfully");
                     }
