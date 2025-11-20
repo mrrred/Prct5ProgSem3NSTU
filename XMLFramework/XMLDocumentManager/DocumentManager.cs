@@ -5,49 +5,28 @@ using System.IO;
 using System.Xml.Linq;
 using XMLFramework.XMLConfigurations.Abstractions;
 using XMLFramework.XMLDocumentManager.Abstractions;
+using XMLFramework.XMLFiles.Abstractions;
 using XMLFramework.XMLInteraction.Abstractions;
 
 namespace XMLFramework.XMLDocumentManager
 {
     public class DocumentManager : IDocumentManager<BoolMatrix>
     {
-        public string XMLDocumentName { get; }
-
-        public XDocument XDocument { get; }
-
-        private IXMLBoolMatrixConfiguration _config;
+        private IXMLFile _xMLFile;
 
         private IXDocEditor<BoolMatrix> _xDocEditor;
 
         private IXDocSearcher<BoolMatrix> _xDocSearcher;
 
-        public DocumentManager(string xDocumentName,
-            IXMLBoolMatrixConfiguration config,
+        public DocumentManager(IXMLFile xMLFile,
             IXDocEditor<BoolMatrix> xMLEditor,
             IXDocSearcher<BoolMatrix> xDocSearcher)
         {
-            XMLDocumentName = xDocumentName
-                ?? throw new ArgumentNullException(nameof(xDocumentName));
-
-            _config = config
-                ?? throw new ArgumentNullException(nameof(config));
+            _xMLFile = xMLFile;
 
             _xDocEditor = xMLEditor;
 
             _xDocSearcher = xDocSearcher;
-
-            try
-            {
-                XDocument = XDocument.Load(xDocumentName);
-            }
-            catch (FileNotFoundException)
-            {
-                XDocument = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement(_config.XMLRootName));
-                XDocument.Save(XMLDocumentName);
-            }
-
-            if (XDocument?.Root == null)
-                throw new InvalidOperationException("XML document root is missing");
         }
 
         public void Add(BoolMatrix boolMatrix)
@@ -56,7 +35,7 @@ namespace XMLFramework.XMLDocumentManager
 
             _xDocEditor.Add(boolMatrix);
 
-            XDocument.Save(XMLDocumentName);
+            _xMLFile.Save();
         }
 
         public BoolMatrix GetElement(int id)
@@ -68,7 +47,7 @@ namespace XMLFramework.XMLDocumentManager
         {
             var boolMatrix = _xDocEditor.Pop(id);
 
-            XDocument.Save(XMLDocumentName);
+            _xMLFile.Save();
 
             return boolMatrix;
 

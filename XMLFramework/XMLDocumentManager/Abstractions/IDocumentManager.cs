@@ -10,8 +10,6 @@ namespace XMLFramework.XMLDocumentManager.Abstractions
 {
     public interface IDocumentManager<T>
     {
-        public XDocument XDocument { get; }
-
         void Add(T obj);
 
         BoolMatrix GetElement(int id);
