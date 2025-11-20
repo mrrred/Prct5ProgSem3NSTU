@@ -17,6 +17,8 @@ namespace Prct5Prog
         private BoolMatrix _originalMatrix;
         private List<MatrixCell> _matrixCells;
 
+        public int ColumnsCount => int.TryParse(ColumnsTextBox.Text, out int cols) ? cols : 3;
+
         public MatrixDialog()
         {
             InitializeComponent();
