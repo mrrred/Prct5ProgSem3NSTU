@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using BoolMatrixFramework;
-using Prct5Prog.XMLFramework;
 
 namespace Prct5Prog
 {
@@ -50,7 +49,7 @@ namespace Prct5Prog
             {
                 _matrices.Clear();
 
-                var allMatrices = _xmlInteraction.SearchOnAttributes(null);
+                var allMatrices = _xmlInteraction.SearchOnAttributes(new Dictionary<string, string>());
 
                 foreach (var matrixEntry in allMatrices)
                 {
@@ -64,6 +63,8 @@ namespace Prct5Prog
                         Matrix = matrix
                     });
                 }
+
+                MatrixListView.ItemsSource = null;
                 MatrixListView.ItemsSource = _matrices.OrderBy(m => m.Id).ToList();
                 UpdateCount();
                 UpdateStatus("Matrix list refreshed");
@@ -109,7 +110,7 @@ namespace Prct5Prog
                     var newMatrix = dialog.GetMatrix();
                     _xmlInteraction.Add(newMatrix);
                     RefreshMatrixList();
-                    UpdateStatus($"Matrix added successfully (ID: {_matrices.Count - 1})");
+                    UpdateStatus($"Matrix added successfully");
                 }
             }
             catch (Exception ex)
@@ -250,6 +251,18 @@ namespace Prct5Prog
                 for (int j = 0; j < matrix.CollumnsCount; j++)
                     if (matrix[i, j]) count++;
             return count;
+        }
+
+        private void SearchTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (SearchTextBox.Text == "Enter search terms...")
+                SearchTextBox.Text = "";
+        }
+
+        private void SearchTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(SearchTextBox.Text))
+                SearchTextBox.Text = "Enter search terms...";
         }
     }
 }

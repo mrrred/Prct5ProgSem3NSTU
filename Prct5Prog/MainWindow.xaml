@@ -52,7 +52,8 @@
 
             <GroupBox Header="Search">
                 <StackPanel>
-                    <TextBox x:Name="SearchTextBox" Height="25" Margin="5" Text="Enter search terms..."/>
+                    <TextBox x:Name="SearchTextBox" Height="25" Margin="5" Text="Enter search terms..."
+                        GotFocus="SearchTextBox_GotFocus" LostFocus="SearchTextBox_LostFocus"/>
                     <Button x:Name="SearchButton" Content="Search" Height="30" Margin="5" Click="SearchButton_Click"/>
                     <Button x:Name="ClearSearchButton" Content="Clear Search" Height="30" Margin="5" Click="ClearSearchButton_Click"/>
                 </StackPanel>

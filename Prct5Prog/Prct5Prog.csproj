@@ -8,4 +8,9 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BoolMatrixFramework\BoolMatrixFramework.csproj" />
+    <ProjectReference Include="..\XMLFramework\XMLFramework.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -5,6 +5,10 @@ VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prct5Prog", "Prct5Prog\Prct5Prog.csproj", "{1F04667E-E678-40B5-A6C0-B64D6768CF8C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XMLFramework", "XMLFramework\XMLFramework.csproj", "{02B48449-9479-4A0A-92D0-4B11AE95AEB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoolMatrixFramework", "BoolMatrixFramework\BoolMatrixFramework.csproj", "{37E34BF5-259A-4528-B62C-65C131D79CCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{1F04667E-E678-40B5-A6C0-B64D6768CF8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F04667E-E678-40B5-A6C0-B64D6768CF8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F04667E-E678-40B5-A6C0-B64D6768CF8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02B48449-9479-4A0A-92D0-4B11AE95AEB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02B48449-9479-4A0A-92D0-4B11AE95AEB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02B48449-9479-4A0A-92D0-4B11AE95AEB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02B48449-9479-4A0A-92D0-4B11AE95AEB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37E34BF5-259A-4528-B62C-65C131D79CCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37E34BF5-259A-4528-B62C-65C131D79CCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37E34BF5-259A-4528-B62C-65C131D79CCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37E34BF5-259A-4528-B62C-65C131D79CCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

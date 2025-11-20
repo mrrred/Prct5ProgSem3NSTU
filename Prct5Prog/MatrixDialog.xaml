@@ -31,20 +31,20 @@
 
         <GroupBox Grid.Row="1" Grid.Column="1" Header="Matrix Data" Margin="5,0,0,0">
             <ScrollViewer>
-                <ItemsControl x:Name="MatrixItemsControl">
+				<ItemsControl x:Name="MatrixItemsControl">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Columns="{Binding Columns}"/>
+                            <WrapPanel/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <CheckBox IsChecked="{Binding Value}" Margin="2"
-                                      Checked="CheckBox_Changed" Unchecked="CheckBox_Changed"/>
+                                Checked="CheckBox_Changed" Unchecked="CheckBox_Changed"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </ScrollViewer>
+                </ScrollViewer>
         </GroupBox>
 
         <GroupBox Grid.Row="2" Grid.ColumnSpan="2" Header="Quick Input" Margin="0,5,0,5">
