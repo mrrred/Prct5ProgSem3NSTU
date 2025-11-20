@@ -10,6 +10,16 @@ namespace XMLFramework.Serializators
 {
     public class BoolMatrixSerializator : ISerializator<BoolMatrix>
     {
+        private string _rowsSeparator;
+
+        private string _columnsSeparator;
+
+        public BoolMatrixSerializator(string rowsSeparator, string columnsSeparator)
+        {
+            _rowsSeparator = rowsSeparator;
+            _columnsSeparator = columnsSeparator;
+        }
+
         public string Serialization(BoolMatrix boolMatrix)
         {
             StringBuilder stringBoolMatrix = new StringBuilder();
@@ -18,12 +28,12 @@ namespace XMLFramework.Serializators
             {
                 for (int j = 0; j < boolMatrix.CollumnsCount; j++)
                 {
-                    if (boolMatrix[i, j]) stringBoolMatrix.Append("1,");
-                    else stringBoolMatrix.Append("0,");
+                    if (boolMatrix[i, j]) stringBoolMatrix.Append("1" + _columnsSeparator);
+                    else stringBoolMatrix.Append("0" + _columnsSeparator);
                 }
 
                 stringBoolMatrix.Remove(stringBoolMatrix.Length - 1, 1);
-                stringBoolMatrix.Append(';');
+                stringBoolMatrix.Append(_rowsSeparator);
             }
 
             stringBoolMatrix.Remove(stringBoolMatrix.Length - 1, 1);

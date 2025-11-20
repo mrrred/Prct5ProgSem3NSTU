@@ -56,6 +56,8 @@ namespace XMLFramework.XMLDocumentManager
         public void EditElement(int id, BoolMatrix boolMatrix)
         {
             _xDocEditor.Edit(boolMatrix, id);
+
+            _xMLFile.Save();
         }
 
         public Dictionary<string, BoolMatrix> SearchOnAttributes(Dictionary<string, string>? attributes = null)

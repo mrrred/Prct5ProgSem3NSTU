@@ -9,7 +9,7 @@ using XMLFramework.XMLFiles.Abstractions;
 
 namespace XMLFramework.XMLFiles
 {
-    class XMLFile : IXMLFile
+    public class XMLFile : IXMLFile
     {
         public XDocument XML { get; }
 
