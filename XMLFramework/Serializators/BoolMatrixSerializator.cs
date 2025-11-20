@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XMLFramework.Serializators.Abstractions;
+using XMLFramework.XMLConfigurations.Abstractions;
 
 namespace XMLFramework.Serializators
 {
@@ -14,11 +15,16 @@ namespace XMLFramework.Serializators
 
         private string _columnsSeparator;
 
-        public BoolMatrixSerializator(string rowsSeparator, string columnsSeparator)
+        public BoolMatrixSerializator(string rowsSeparator = ";", string columnsSeparator = ",")
         {
+            ArgumentNullException.ThrowIfNullOrEmpty(rowsSeparator);
+            ArgumentNullException.ThrowIfNullOrEmpty(columnsSeparator);
+
             _rowsSeparator = rowsSeparator;
             _columnsSeparator = columnsSeparator;
         }
+
+        public BoolMatrixSerializator(IXMLBoolMatrixConfiguration config) : this(config.RowsSeparator, config.ColumnsSeparator) { }
 
         public string Serialization(BoolMatrix boolMatrix)
         {

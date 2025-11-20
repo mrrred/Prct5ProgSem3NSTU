@@ -22,11 +22,14 @@ namespace XMLFramework.XMLInteraction
 
         public XMLBoolMatrixElementBuilder(XDocument xDoc, IXMLBoolMatrixConfiguration config, ISerializator<BoolMatrix> serializator)
         {
-            _xDoc = xDoc;
+            _xDoc = xDoc
+                ?? throw new ArgumentNullException(nameof(xDoc));
 
-            _config = config;
+            _config = config
+                ?? throw new ArgumentNullException(nameof(config));
 
-            _serializator = serializator;
+            _serializator = serializator
+                ?? throw new ArgumentNullException(nameof(serializator));
         }
 
         public XElement BuildElement(BoolMatrix boolMatrix, int id)

@@ -10,7 +10,7 @@ using XMLFramework.XMLInteraction.Abstractions;
 
 namespace XMLFramework.XMLDocumentManager
 {
-    public class DocumentManager : IDocumentManager<BoolMatrix>
+    public class BoolMatrixDocumentManager : IDocumentManager<BoolMatrix>
     {
         private IXMLFile _xMLFile;
 
@@ -18,15 +18,15 @@ namespace XMLFramework.XMLDocumentManager
 
         private IXDocSearcher<BoolMatrix> _xDocSearcher;
 
-        public DocumentManager(IXMLFile xMLFile,
+        public BoolMatrixDocumentManager(IXMLFile xMLFile,
             IXDocEditor<BoolMatrix> xMLEditor,
             IXDocSearcher<BoolMatrix> xDocSearcher)
         {
-            _xMLFile = xMLFile;
+            _xMLFile = xMLFile ?? throw new ArgumentNullException(nameof(xMLFile));
 
-            _xDocEditor = xMLEditor;
+            _xDocEditor = xMLEditor ?? throw new ArgumentNullException(nameof(xMLEditor));
 
-            _xDocSearcher = xDocSearcher;
+            _xDocSearcher = xDocSearcher ?? throw new ArgumentNullException(nameof(xDocSearcher));
         }
 
         public void Add(BoolMatrix boolMatrix)
@@ -50,7 +50,6 @@ namespace XMLFramework.XMLDocumentManager
             _xMLFile.Save();
 
             return boolMatrix;
-
         }
 
         public void EditElement(int id, BoolMatrix boolMatrix)

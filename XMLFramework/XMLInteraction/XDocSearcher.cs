@@ -21,22 +21,28 @@ namespace XMLFramework.XMLInteraction
 
         public XDocSearcher(XDocument xDoc, IDeserializator<BoolMatrix> deserializator, IXMLBoolMatrixConfiguration config)
         {
-            _xDoc = xDoc;
+            _xDoc = xDoc ?? throw new ArgumentNullException(nameof(xDoc));
 
-            _deserializator = deserializator;
+            if (xDoc.Root == null) throw new ArgumentNullException("Root is missing");
 
-            _config = config;
+            _deserializator = deserializator ?? throw new ArgumentNullException(nameof(deserializator));
+
+            _config = config ?? throw new ArgumentNullException(nameof(config));
+        }
+
+        private int GetElementId(XElement element)
+        {
+            return Convert.ToInt32(element.Attribute(_config.IDAttributeName)?.Value
+                ?? throw new ArgumentException($"Attribute {_config.IDAttributeName} not found"));
         }
 
         public BoolMatrix SearchOnId(int id)
         {
-            XElement searchElement = _xDoc!.Root!
-                .Elements(_config.XMLMatrixElementName)
-                .FirstOrDefault(el => Convert.ToInt32(el?.Attribute(_config.IDAttributeName)?.Value
-                ?? throw new ArgumentException($"Attribute {_config.IDAttributeName} not found", nameof(_config.IDAttributeName))) == id)
-                ?? throw new ArgumentException($"Element with ID {id} not found", nameof(id));
+            var element = _xDoc!.Root!.Elements(_config.XMLMatrixElementName)
+                .FirstOrDefault(el => GetElementId(el) == id)
+                ?? throw new ArgumentException($"Element with ID {id} not found");
 
-            return _deserializator.Deserialization(searchElement.Value);
+            return _deserializator.Deserialization(element.Value);
         }
 
         public Dictionary<string, BoolMatrix> SearchOnAttribute(Dictionary<string, string>? attributes = null)

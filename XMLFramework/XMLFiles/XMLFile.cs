@@ -13,31 +13,37 @@ namespace XMLFramework.XMLFiles
     {
         public XDocument XML { get; }
 
-        private string _fileName;
+        private string _filePath;
 
-        public XMLFile(string fileName, string rootName)
+        public XMLFile(string filePath, string rootName)
         {
-            _fileName = fileName;
+            ArgumentNullException.ThrowIfNullOrEmpty(filePath, "File path cannot be empty or null");
+
+            _filePath = filePath;
 
             try
             {
-                XML = XDocument.Load(fileName);
+                XML = XDocument.Load(filePath);
             }
             catch (FileNotFoundException)
             {
                 XML = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement(rootName));
                 Save();
             }
+            catch (Exception ex) when (ex is DirectoryNotFoundException or UnauthorizedAccessException)
+            {
+                throw new InvalidOperationException($"Cannot access file: {filePath}", ex);
+            }
 
             if (XML?.Root == null)
                 throw new InvalidOperationException("XML document root is missing");
         }
 
-        public XMLFile(string fileName, IXMLConfiguration xMLConfiguration) : this(fileName, xMLConfiguration.XMLRootName) { }
+        public XMLFile(string filePath, IXMLConfiguration xMLConfiguration) : this(filePath, xMLConfiguration.XMLRootName) { }
 
         public void Save()
         {
-            XML.Save(_fileName);
+            XML.Save(_filePath);
         }
     }
 }

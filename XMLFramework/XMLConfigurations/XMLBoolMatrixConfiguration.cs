@@ -19,11 +19,17 @@ namespace XMLFramework.XMLConfigurations
 
         public string ColumnCountAttributeName { get; }
 
+        public string RowsSeparator { get; }
+
+        public string ColumnsSeparator {  get; }
+
         public XMLBoolMatrixConfiguration(string xmlRootName = "Matrices",
             string xmlMatrixElementName = "Matrix",
             string idAttributeName = "Id",
             string rowsCountAttributeName = "Rows",
-            string columnCountAttributeName = "Column")
+            string columnCountAttributeName = "Column",
+            string rowsSeparator = ";",
+            string columnsSeparator = ",")
         {
             XMLRootName = xmlRootName
                 ?? throw new ArgumentNullException(nameof(xmlRootName));
@@ -39,6 +45,12 @@ namespace XMLFramework.XMLConfigurations
 
             ColumnCountAttributeName = columnCountAttributeName
                 ?? throw new ArgumentNullException(nameof(columnCountAttributeName));
+
+            RowsSeparator = rowsSeparator
+                ?? throw new ArgumentNullException(nameof(rowsSeparator));
+
+            ColumnsSeparator = columnsSeparator
+                ?? throw new ArgumentNullException(nameof(columnsSeparator));
         }
     }
 }

@@ -14,7 +14,6 @@ using XMLFramework.XMLInteraction.Abstractions;
 
 namespace XMLFramework.XMLInteraction
 {
-    // ПОДРЕДАЧИТЬ СКОПИРОВАННЫЙ КОД
     public class XDocBoolMatrixEditor : IXDocEditor<BoolMatrix>
     {
         private XDocument _xDoc;
@@ -33,66 +32,84 @@ namespace XMLFramework.XMLInteraction
             IXmlElementBuilder<BoolMatrix> xmlElementBuilder, IXMLIdManager idManager,
             ISerializator<BoolMatrix> serializator, IDeserializator<BoolMatrix> deserializator)
         {
-            _xDoc = xDocument;
+            _xDoc = xDocument
+                ?? throw new ArgumentNullException(nameof(xDocument));
 
-            _config = config;
+            if (_xDoc.Root == null) throw new ArgumentNullException("Root is not found");
 
-            _xmlElementBuilder = xmlElementBuilder;
+            _config = config
+                ?? throw new ArgumentNullException(nameof(config));
 
-            _idManager = idManager;
+            _xmlElementBuilder = xmlElementBuilder
+                ?? throw new ArgumentNullException(nameof(xmlElementBuilder));
 
-            _serializator = serializator;
+            _idManager = idManager
+                ?? throw new ArgumentNullException(nameof(idManager));
 
-            _deserializator = deserializator;
+            _serializator = serializator
+                ?? throw new ArgumentNullException(nameof(serializator));
+
+            _deserializator = deserializator
+                ?? throw new ArgumentNullException(nameof(deserializator));
         }
 
         public void Add(BoolMatrix boolMatrix)
         {
-            _xDoc.Root.Add(_xmlElementBuilder.BuildElement(boolMatrix, _idManager.NextId()));
+            _xDoc!.Root!.Add(_xmlElementBuilder.BuildElement(boolMatrix, _idManager.NextId()));
         }
 
         public BoolMatrix Pop(int id)
         {
-            var element = _xDoc!.Root!
-                .Elements(_config.XMLMatrixElementName)
-                .FirstOrDefault(el => Convert.ToInt32(el?.Attribute(_config.IDAttributeName)?.Value
-                ?? throw new ArgumentException($"Attribute {_config.IDAttributeName} not found", nameof(_config.IDAttributeName))) == id)
-                ?? throw new ArgumentException($"Element with ID {id} not found", nameof(id));
+            var element = FindElementById(id);
 
             var boolMatrix = _deserializator.Deserialization(element.Value);
             element.Remove();
 
-            var xDocELement = _xDoc!.Root!
-                .Elements(_config.XMLMatrixElementName)
-                .Where(el => Convert.ToInt32(el?.Attribute(_config.IDAttributeName)?.Value
-                ?? throw new ArgumentException($"Attribute {_config.IDAttributeName} not found", nameof(_config.IDAttributeName))) > id);
-
-            foreach (var el in xDocELement)
-            {
-                if (el != null && el.Attribute(_config.IDAttributeName) != null)
-                {
-                    el!.Attribute(_config.IDAttributeName)!.Value
-                        = (Convert.ToInt32(el.Attribute(_config.IDAttributeName)?.Value
-                        ?? throw new ArgumentException($"Attribute {_config.IDAttributeName} not found", nameof(_config.IDAttributeName))) - 1).ToString();
-                }
-            }
+            _idManager.UpdateIdsAfterDeletion(id);
 
             return boolMatrix;
         }
 
         public void Edit(BoolMatrix boolMatrix, int id)
         {
-            XElement xElement = _xDoc!.Root!
+            var element = FindElementById(id);
+
+            UpdateElement(element, boolMatrix);
+        }
+
+        private XElement FindElementById(int id)
+        {
+            return _xDoc.Root!
                 .Elements(_config.XMLMatrixElementName)
-                .FirstOrDefault(el => Convert.ToInt32(el?.Attribute(_config.IDAttributeName)?.Value
-                ?? throw new ArgumentException($"Attribute {_config.IDAttributeName} not found", nameof(_config.IDAttributeName))) == id)
+                .FirstOrDefault(IsElementWithId(id))
                 ?? throw new ArgumentException($"Element with ID {id} not found", nameof(id));
+        }
 
-            xElement.Value = _serializator.Serialization(boolMatrix);
+        private Func<XElement, bool> IsElementWithId(int id)
+        {
+            return el =>
+            {
+                var elementId = GetElementId(el);
+                return elementId == id;
+            };
+        }
 
-            xElement.SetAttributeValue(_config.RowsCountAttributeName, boolMatrix.RowsCount.ToString());
+        private int GetElementId(XElement element)
+        {
+            var idAttribute = element.Attribute(_config.IDAttributeName)
+                ?? throw new ArgumentException($"Attribute {_config.IDAttributeName} not found",
+                nameof(_config.IDAttributeName));
 
-            xElement.SetAttributeValue(_config.ColumnCountAttributeName, boolMatrix.CollumnsCount.ToString());
+            return Convert.ToInt32(idAttribute.Value);
+        }
+
+        private void UpdateElement(XElement element, BoolMatrix boolMatrix)
+        {
+            element.Value = _serializator.Serialization(boolMatrix);
+
+            element.SetAttributeValue(_config.RowsCountAttributeName, boolMatrix.RowsCount.ToString());
+
+            element.SetAttributeValue(_config.ColumnCountAttributeName, boolMatrix.CollumnsCount.ToString());
         }
     }
 }

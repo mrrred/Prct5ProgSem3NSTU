@@ -5,20 +5,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XMLFramework.Deserializators.Abstractions;
+using XMLFramework.XMLConfigurations.Abstractions;
 
 namespace XMLFramework.Deserializators
 {
     public class BoolmatrixDeserializator : IDeserializator<BoolMatrix>
     {
-        private string _rowsSeparator;
+        private readonly string _rowsSeparator;
 
-        private string _columnsSeparator;
+        private readonly string _columnsSeparator;
 
-        public BoolmatrixDeserializator(string rowsSeparator, string columnsSeparator)
+        public BoolmatrixDeserializator(string rowsSeparator = ";", string columnsSeparator = ",")
         {
+            ArgumentNullException.ThrowIfNullOrEmpty(rowsSeparator);
+            ArgumentNullException.ThrowIfNullOrEmpty(columnsSeparator);
+
             _rowsSeparator = rowsSeparator;
             _columnsSeparator = columnsSeparator;
         }
+
+        public BoolmatrixDeserializator(IXMLBoolMatrixConfiguration config) : this(config.RowsSeparator, config.ColumnsSeparator) { }
 
         public BoolMatrix Deserialization(string stringBoolMatrix)
         {
@@ -31,7 +37,8 @@ namespace XMLFramework.Deserializators
 
             int collumns = rowsStrings[0].Split(_columnsSeparator).Length;
 
-            // Проверки на 0 добавить
+            if (rows == 0 || collumns == 0)
+                throw new ArgumentException("Matrix dimensions cannot be zero");
 
             BoolMatrix resultBoolMatrix = new(rows, collumns);
 

@@ -9,5 +9,7 @@ namespace XMLFramework.XMLIdManagers.Abstractions
     public interface IXMLIdManager
     {
         int NextId();
+
+        void UpdateIdsAfterDeletion(int removedId);
     }
 }

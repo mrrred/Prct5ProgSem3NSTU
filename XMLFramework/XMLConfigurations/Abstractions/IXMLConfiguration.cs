@@ -13,5 +13,9 @@ namespace XMLFramework.XMLConfigurations.Abstractions
         public string XMLMatrixElementName { get; }
 
         public string IDAttributeName { get; }
+
+        public string RowsSeparator { get; }
+
+        public string ColumnsSeparator { get; }
     }
 }
