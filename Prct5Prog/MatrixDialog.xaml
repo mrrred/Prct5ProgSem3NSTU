@@ -34,7 +34,7 @@
 				<ItemsControl x:Name="MatrixItemsControl">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel/>
+                            <UniformGrid Columns="{Binding Columns}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>

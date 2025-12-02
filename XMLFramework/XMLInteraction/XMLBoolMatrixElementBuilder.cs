@@ -37,7 +37,7 @@ namespace XMLFramework.XMLInteraction
             XElement xElement = new XElement(_config.XMLMatrixElementName,
                 new XAttribute(_config.IDAttributeName, _xDoc!.Root!.Elements(_config.XMLMatrixElementName).Count()),
                 new XAttribute(_config.RowsCountAttributeName, boolMatrix.RowsCount),
-                new XAttribute(_config.ColumnCountAttributeName, boolMatrix.CollumnsCount)
+                new XAttribute(_config.ColumnCountAttributeName, boolMatrix.ColumnsCount)
                 );
 
             xElement.Value = _serializator.Serialization(boolMatrix);

@@ -32,7 +32,7 @@ namespace XMLFramework.Serializators
 
             for (int i = 0; i < boolMatrix.RowsCount; i++)
             {
-                for (int j = 0; j < boolMatrix.CollumnsCount; j++)
+                for (int j = 0; j < boolMatrix.ColumnsCount; j++)
                 {
                     if (boolMatrix[i, j]) stringBoolMatrix.Append("1" + _columnsSeparator);
                     else stringBoolMatrix.Append("0" + _columnsSeparator);

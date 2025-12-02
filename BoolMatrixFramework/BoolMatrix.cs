@@ -40,7 +40,7 @@ namespace BoolMatrixFramework
 
         private readonly int _columnsCount;
 
-        public int CollumnsCount
+        public int ColumnsCount
         {
             get { return _columnsCount; }
         }

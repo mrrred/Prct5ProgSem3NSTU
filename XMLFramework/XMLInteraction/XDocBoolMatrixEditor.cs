@@ -109,7 +109,7 @@ namespace XMLFramework.XMLInteraction
 
             element.SetAttributeValue(_config.RowsCountAttributeName, boolMatrix.RowsCount.ToString());
 
-            element.SetAttributeValue(_config.ColumnCountAttributeName, boolMatrix.CollumnsCount.ToString());
+            element.SetAttributeValue(_config.ColumnCountAttributeName, boolMatrix.ColumnsCount.ToString());
         }
     }
 }
