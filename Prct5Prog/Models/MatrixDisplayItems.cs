@@ -47,21 +47,11 @@ namespace Prct5Prog.Models
             return result.ToString().Trim();
         }
 
-        public override bool Equals(object obj) => Equals(obj as MatrixDisplayItem);
-
         public bool Equals(MatrixDisplayItem other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             return _id == other._id && _matrix == other._matrix;
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (_id * Constants.HASHCODE_PRIME) ^ (_matrix?.GetHashCode() ?? 0);
-            }
         }
 
         public static bool operator ==(MatrixDisplayItem left, MatrixDisplayItem right) =>
@@ -70,7 +60,5 @@ namespace Prct5Prog.Models
         public static bool operator !=(MatrixDisplayItem left, MatrixDisplayItem right) =>
             !Equals(left, right);
 
-        public override string ToString() =>
-            $"Matrix ID: {Id}, Size: {Rows}x{Columns}";
     }
 }

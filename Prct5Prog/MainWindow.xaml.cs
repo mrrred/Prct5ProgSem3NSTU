@@ -230,7 +230,7 @@ namespace Prct5Prog
 
                 DetailsTextBlock.Text =
                     $"ID: {selectedItem.Id}\n" +
-                    $"Size: {selectedItem.Rows} × {selectedItem.Columns}\n" +
+                    $"Size: {selectedItem.Rows} x {selectedItem.Columns}\n" +
                     $"Total Elements: {totalElements}\n" +
                     $"True Values: {trueCount} ({truePercentage:F1}%)\n" +
                     $"False Values: {totalElements - trueCount}";

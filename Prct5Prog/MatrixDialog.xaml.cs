@@ -17,6 +17,7 @@ namespace Prct5Prog
         private BoolMatrix _matrix;
         private List<MatrixCell> _matrixCells;
         private bool _isInitialized = false;
+        private bool _quickInputHasError = false;
 
         public MatrixDialog() : this(new BoolMatrix(Constants.DEFAULT_MATRIX_ROWS, Constants.DEFAULT_MATRIX_COLUMNS))
         {
@@ -117,6 +118,7 @@ namespace Prct5Prog
             QuickInputTextBox.TextChanged -= QuickInputTextBox_TextChanged;
             QuickInputTextBox.Text = input.ToString().Trim();
             QuickInputTextBox.TextChanged += QuickInputTextBox_TextChanged;
+            _quickInputHasError = false;
         }
 
         private bool TryParseSize(string text, out int value)
@@ -150,7 +152,7 @@ namespace Prct5Prog
 
             if (rows > Constants.MAX_MATRIX_ROWS || columns > Constants.MAX_MATRIX_COLUMNS)
             {
-                errorMessage = $"Maximum size is {Constants.MAX_MATRIX_ROWS}x{Constants.MAX_MATRIX_COLUMNS}.";
+                errorMessage = $"Maximum size is {Constants.MAX_MATRIX_ROWS}x{  Constants.MAX_MATRIX_COLUMNS}.";
                 return false;
             }
 
@@ -158,6 +160,40 @@ namespace Prct5Prog
             {
                 errorMessage = $"Maximum total elements is {Constants.MAX_MATRIX_ELEMENTS}.";
                 return false;
+            }
+
+            return true;
+        }
+
+        private bool ValidateQuickInput()
+        {
+            var input = QuickInputTextBox.Text;
+            if (string.IsNullOrWhiteSpace(input)) return true;
+
+            var rows = input.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            int expectedRows = GetValidatedRows();
+            int expectedColumns = GetValidatedColumns();
+
+            if (rows.Length > expectedRows)
+            {
+                return false;
+            }
+
+            foreach (var row in rows)
+            {
+                var cells = row.Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                if (cells.Length > expectedColumns)
+                {
+                    return false;
+                }
+
+                foreach (var cell in cells)
+                {
+                    if (cell != "0" && cell != "1")
+                    {
+                        return false;
+                    }
+                }
             }
 
             return true;
@@ -176,6 +212,12 @@ namespace Prct5Prog
                 if (!ValidateMatrixSize(rows, columns, out string errorMessage))
                 {
                     MessageBox.Show(errorMessage, "Invalid Size", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (!ValidateQuickInput())
+                {
+                    MessageBox.Show("Quick input contains invalid data. Please correct it before resizing.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -212,6 +254,12 @@ namespace Prct5Prog
                 if (!ValidateMatrixSize(rows, columns, out string errorMessage))
                 {
                     MessageBox.Show(errorMessage, "Invalid Size", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (!ValidateQuickInput())
+                {
+                    MessageBox.Show("Quick input contains invalid data. Only 0 and 1 are allowed, and the number of values must match the matrix size.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -260,7 +308,11 @@ namespace Prct5Prog
             try
             {
                 var input = QuickInputTextBox.Text;
-                if (string.IsNullOrWhiteSpace(input)) return;
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    _quickInputHasError = false;
+                    return;
+                }
 
                 var rows = input.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
                 var values = new List<bool>();
@@ -304,10 +356,16 @@ namespace Prct5Prog
                     }
 
                     MatrixItemsControl.Items.Refresh();
+                    _quickInputHasError = false;
+                }
+                else
+                {
+                    _quickInputHasError = true;
                 }
             }
             catch
             {
+                _quickInputHasError = true;
             }
         }
 
